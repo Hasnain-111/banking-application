@@ -10,7 +10,12 @@ public class transaction {
     private String note;
     private LocalDateTime timeStamp;
 
-    public transaction(String id, LocalDateTime timeStamp, String note, double amount, Type type, String accountNumber) {
+    public transaction(String id,
+                       LocalDateTime timeStamp,
+                       String note,
+                       double amount,
+                       Type type,
+                       String accountNumber) {
         this.id = id;
         this.timeStamp = timeStamp;
         this.note = note;

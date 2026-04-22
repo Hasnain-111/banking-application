@@ -12,4 +12,20 @@ public class Account {
         this.customerId = customerId;
         this.balance = balance;
     }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
 }
