@@ -3,7 +3,9 @@ package service;
 import domain.Account;
 import repository.AccountRepository;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BankServiceImpl implements BankService {
     private final AccountRepository accountRepository = new AccountRepository();
@@ -18,9 +20,13 @@ public class BankServiceImpl implements BankService {
         return accountNumber;
     }
 
+    @Override
+    public List<Account> listAccount() {
+        return accountRepository.findAll().stream().collect(Collectors.toList());
+    }
+
     private String getAccountNumber() {
         int size = accountRepository.findAll().size()+1;
-        String accountNumber  = String.format("AC06d"+size);
-        return accountNumber;
+        return String.format("AC%06d",size);
     }
 }
