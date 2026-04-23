@@ -28,8 +28,8 @@ public class Main {
 
             switch (choice){
                 case "1" -> openAccount(sc,bankService);
-                case "2" -> deposit(sc);
-                case "3" -> withdraw(sc);
+                case "2" -> deposit(sc,bankService);
+                case "3" -> withdraw(sc,bankService);
                 case "4" -> transfer(sc);
                 case "5" -> accountStatement(sc);
                 case "6" -> listAccounts(sc,bankService);
@@ -55,13 +55,29 @@ public class Main {
         String amountStr =sc.nextLine().trim();
         Double initial = Double.valueOf(amountStr);
 
-        bankService.openAccount(name,email,type);
+        String accountNumber = bankService.openAccount(name,email,type);
+        if(initial>0){
+            bankService.deposit(accountNumber,initial,"Initial Deposit");
+            System.out.println("Account Opened:"+accountNumber);
+        }
     }
 
-    private static void deposit(Scanner sc) {
+    private static void deposit(Scanner sc,BankService bankService) {
+        System.out.println("Account Number");
+        String accountNumber = sc.nextLine().trim();
+        System.out.println("amount");
+        double amount = Double.valueOf(sc.nextLine().trim());
+        bankService.deposit(accountNumber,amount,"Deposit");
+        System.out.println("Deposited");
     }
 
-    private static void withdraw(Scanner sc) {
+    private static void withdraw(Scanner sc,BankService bankService) {
+        System.out.println("Account Number");
+        String accountNumber = sc.nextLine().trim();
+        System.out.println("Enter the Amount you want to Withdraw");
+        double amount = Double.valueOf(sc.nextLine().trim());
+        bankService.withDraw(accountNumber,amount,"WithDrawl");
+        System.out.println("Withdrawn");
     }
 
     private static void transfer(Scanner sc) {
@@ -70,7 +86,7 @@ public class Main {
     private static void accountStatement(Scanner sc) {
     }
 
-    private static void listAccounts(Scanner sc,BankService bankService) {
+    private static void listAccounts(Scanner sc, BankService bankService) {
         bankService.listAccount().forEach(account -> {
             System.out.println(account.getAccountNumber() +"|"
                     +account.getAccountType() +
