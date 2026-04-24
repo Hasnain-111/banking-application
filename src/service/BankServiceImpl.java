@@ -4,6 +4,9 @@ import domain.Account;
 import domain.Customer;
 import domain.Transaction;
 import domain.Type;
+import exceptions.AccountNotFoundException;
+import exceptions.InsufficientFundException;
+import exceptions.ValdationException;
 import repository.AccountRepository;
 import repository.CustomerRepository;
 import repository.TransactionRepository;
@@ -39,7 +42,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void deposit(String accountNumber, double amount, String note) {
-        Account account = accountRepository.FindByNumber(accountNumber).orElseThrow(()->new RuntimeException("Account not found"+accountNumber));
+        Account account = accountRepository.FindByNumber(accountNumber).orElseThrow(()->new AccountNotFoundException("Account not found"+accountNumber));
         account.setBalance(account.getBalance()+amount);
         Transaction transaction = new Transaction(UUID.randomUUID().toString(), LocalDateTime.now(),note,amount, Type.Deposit,accountNumber);
         transactionRepository.add(transaction);
@@ -49,7 +52,7 @@ public class BankServiceImpl implements BankService {
     public void withDraw(String accountNumber, double amount, String withDrawl) {
         Account account = accountRepository.FindByNumber(accountNumber).orElseThrow(()->new RuntimeException("Account not found"+accountNumber));
         if(account.getBalance() <amount){
-            throw new RuntimeException("Insufficient Balance:");
+            throw new InsufficientFundException("Insufficient Balance:");
         }
         account.setBalance(account.getBalance()-amount);
         Transaction transaction = new Transaction(UUID.randomUUID().toString(),LocalDateTime.now(),"Withdraw",amount,Type.withdraw,accountNumber);
@@ -59,12 +62,12 @@ public class BankServiceImpl implements BankService {
     @Override
     public void transfer(String from, String to, double amount, String transfer) {
         if(from.equals(to)){
-            System.out.println("Amount cannot be transfered to self account");
+            throw  new ValdationException("Amount cannot be transfered to self account");
         }
-        Account fromAcc = accountRepository.FindByNumber(from).orElseThrow(()->new RuntimeException("Account not found"));
-        Account toAcc =accountRepository.FindByNumber(to).orElseThrow(()->new RuntimeException("Accont not found"));
+        Account fromAcc = accountRepository.FindByNumber(from).orElseThrow(()->new AccountNotFoundException("Account not found"));
+        Account toAcc =accountRepository.FindByNumber(to).orElseThrow(()->new AccountNotFoundException("Accont not found"));
         if(fromAcc.getBalance()<amount){
-            System.out.println("Insufficent Balance");
+            throw new InsufficientFundException("Insufficent Balance");
         }
 
         fromAcc.setBalance(fromAcc.getBalance()-amount);
