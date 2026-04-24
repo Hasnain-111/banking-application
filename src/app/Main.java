@@ -30,7 +30,7 @@ public class Main {
                 case "1" -> openAccount(sc,bankService);
                 case "2" -> deposit(sc,bankService);
                 case "3" -> withdraw(sc,bankService);
-                case "4" -> transfer(sc);
+                case "4" -> transfer(sc,bankService);
                 case "5" -> accountStatement(sc);
                 case "6" -> listAccounts(sc,bankService);
                 case "7" ->searchAccounts(sc);
@@ -80,7 +80,14 @@ public class Main {
         System.out.println("Withdrawn");
     }
 
-    private static void transfer(Scanner sc) {
+    private static void transfer(Scanner sc,BankService bankService) {
+        System.out.println("Enter the Account you want to transfer from:");
+        String from = sc.nextLine().trim();
+        System.out.println("Enter the account you want to transfer to:");
+        String to = sc.nextLine().trim();
+        System.out.println("Enter the amount you want to transfer");
+        double amount = Double.valueOf(sc.nextLine().trim());
+        bankService.transfer(from,to,amount,"Transfer");
     }
 
     private static void accountStatement(Scanner sc) {
