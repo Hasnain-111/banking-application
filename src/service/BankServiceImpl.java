@@ -7,6 +7,7 @@ import repository.AccountRepository;
 import repository.TransactionRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class BankServiceImpl implements BankService {
         if(from.equals(to)){
             System.out.println("Amount cannot be transfered to self account");
         }
-        Account fromAcc = accountRepository.FindByNumber(from).orElseThrow(()->new RuntimeException("Acciount not found"));
+        Account fromAcc = accountRepository.FindByNumber(from).orElseThrow(()->new RuntimeException("Account not found"));
         Account toAcc =accountRepository.FindByNumber(to).orElseThrow(()->new RuntimeException("Accont not found"));
         if(fromAcc.getBalance()<amount){
             System.out.println("Insufficent Balance");
@@ -66,6 +67,11 @@ public class BankServiceImpl implements BankService {
         Transaction fromTransaction = new Transaction(UUID.randomUUID().toString(),LocalDateTime.now(),transfer,amount,Type.transferIn,fromAcc.getAccountNumber());
 
         Transaction toTransaction =new Transaction(UUID.randomUUID().toString(),LocalDateTime.now(),transfer,amount,Type.transferOut,toAcc.getAccountNumber());
+    }
+
+    @Override
+    public List<Transaction> getStatement(String account) {
+        return  transactionRepository.findStatement(account).stream().sorted(Comparator.comparing(Transaction::getTimeStamp)).collect(Collectors.toList());
     }
 
     private String getAccountNumber() {
