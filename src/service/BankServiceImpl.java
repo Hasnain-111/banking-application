@@ -1,12 +1,15 @@
 package service;
 
 import domain.Account;
+import domain.Customer;
 import domain.Transaction;
 import domain.Type;
 import repository.AccountRepository;
+import repository.CustomerRepository;
 import repository.TransactionRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -15,11 +18,14 @@ import java.util.stream.Collectors;
 public class BankServiceImpl implements BankService {
     private final AccountRepository accountRepository = new AccountRepository();
     private final TransactionRepository transactionRepository = new TransactionRepository();
+    private final CustomerRepository customerRepository = new CustomerRepository();
 
 
     @Override
     public String openAccount(String name, String email, String accountType) {
         String customerId = UUID.randomUUID().toString();
+        Customer c  = new Customer(name,customerId,email);
+        customerRepository.save(c);
         String accountNumber = getAccountNumber();
         Account ac = new Account(accountNumber,accountType,customerId,(double) 0);
         accountRepository.save(ac);
@@ -72,6 +78,19 @@ public class BankServiceImpl implements BankService {
     @Override
     public List<Transaction> getStatement(String account) {
         return  transactionRepository.findStatement(account).stream().sorted(Comparator.comparing(Transaction::getTimeStamp)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Account> searchByCustomerName(String q) {
+        String query = (q== null)?"":q.toLowerCase();
+        List<Account> result = new ArrayList<>();
+        for(Customer c:customerRepository.findAll()){
+         if(c.getName().toLowerCase().contains(query)){
+             result.addAll(accountRepository.findByCustomerId(c.getId()));
+         }
+        }
+        result.sort(Comparator.comparing(Account::getAccountNumber));
+        return result;
     }
 
     private String getAccountNumber() {

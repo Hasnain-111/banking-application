@@ -33,7 +33,7 @@ public class Main {
                 case "4" -> transfer(sc,bankService);
                 case "5" -> accountStatement(sc,bankService);
                 case "6" -> listAccounts(sc,bankService);
-                case "7" ->searchAccounts(sc);
+                case "7" ->searchAccounts(sc,bankService);
                 case "0"-> running=false;
             }
         }
@@ -48,7 +48,7 @@ public class Main {
         System.out.println("Customer Email:");
         String email = sc.nextLine();
 
-        System.out.println("Account type ? Saving.Current");
+        System.out.println("Account type ? Saving/Current");
         String type =sc.nextLine().trim();
 
         System.out.println("Initial Deposit (Optional ,0 for no deposit)");
@@ -106,7 +106,13 @@ public class Main {
         });
     }
 
-    private static void searchAccounts(Scanner sc) {
+    private static void searchAccounts(Scanner sc,BankService bankService) {
+        System.out.println("Search by customer name");
+        String q = sc.nextLine().trim();
+        bankService.searchByCustomerName(q).forEach(a->{
+            System.out.println(a.getAccountNumber() +"|"+a.getAccountType() +"|" + a.getBalance());
+        });
+
     }
 
 }
